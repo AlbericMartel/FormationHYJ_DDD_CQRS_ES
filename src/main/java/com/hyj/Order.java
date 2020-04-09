@@ -10,56 +10,44 @@ import com.hyj.event.OrderStarted;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Function;
 
 class Order {
 
-    private StateProjection stateProjection;
-
-    public Order(List<Event> events) {
-        stateProjection = new StateProjection(events);
-        stateProjection.hydrateAll();
+    public Optional<Event> start(StartOrder command) {
+        return start(List.of(), command);
     }
 
-    public Optional<Event> decide(Command command) {
-        return execute(command).stream()
-                .peek(stateProjection::addEvent)
-                .peek(stateProjection::hydrate)
-                .findFirst();
-    }
+    public Optional<Event> start(List<Event> history, Command command) {
+        DecisionProjection decisionProjection = new DecisionProjection(history);
 
-    private Optional<Event> execute(Command command) {
         Event output = null;
 
         if (command instanceof StartOrder) {
-            output = startOrder().apply((StartOrder)command);
+            output = startOrder(decisionProjection, (StartOrder) command);
         } else if (command instanceof TakeMarchandise) {
-            output = takeMarchandise().apply((TakeMarchandise)command);
+            output = takeMarchandise(decisionProjection, (TakeMarchandise) command);
         }
 
         return Optional.ofNullable(output);
     }
 
-    private Function<StartOrder, Event> startOrder() {
-        return startOrder -> new OrderStarted(startOrder.getNbColis());
+    private Event startOrder(DecisionProjection decisionProjection, StartOrder startOrder) {
+        return !decisionProjection.isOrderStarted() ? new OrderStarted(startOrder.getNbColis()) : null;
     }
 
-    private Function<TakeMarchandise, Event> takeMarchandise() {
-        return takeMarchandise -> {
-            Event output = null;
+    private Event takeMarchandise(DecisionProjection decisionProjection, TakeMarchandise takeMarchandise) {
+        if (!decisionProjection.isOrderStarted())
+            return null;
 
-            if (stateProjection.isOrderStarted() && !stateProjection.isMarchandiseFullyReceived()) {
-                int nbColisToTake = takeMarchandise.getNbColis();
+        if (decisionProjection.isMarchandiseFullyReceived())
+            return null;
 
-                if (nbColisToTake < stateProjection.getNbRemainingColis()) {
-                    output = new MarchandisePartiallyReceived(nbColisToTake);
-                } else {
-                    output = new MarchandiseReceived();
-                }
-            }
-
-            return output;
-        };
+        int nbColisToTake = takeMarchandise.getNbColis();
+        if (nbColisToTake < decisionProjection.getNbRemainingColis()) {
+            return new MarchandisePartiallyReceived(nbColisToTake);
+        } else {
+            return new MarchandiseReceived();
+        }
     }
 
 }

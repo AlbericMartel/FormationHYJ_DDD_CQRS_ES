@@ -19,22 +19,39 @@ public class OrderTest {
     @Test
     @DisplayName("When start order Then raise OrderStarted")
     void shouldRaiseOrderStarted_WhenStartOrder() {
-       // WHEN
-        Order order = new Order(List.of());
-        Optional<Event> decision = order.decide(new StartOrder(1));
+        // WHEN
+        Order order = new Order();
+        Optional<Event> decision = order.start(new StartOrder(1));
 
         // THEN
-        assertThat(decision).containsInstanceOf(OrderStarted.class);
+        assertThat(decision).contains(new OrderStarted(1));
+    }
+
+    @Test
+    @DisplayName("When start order twice Then raise nothing")
+    void shouldRaiseNothing_WhenStartOrderTwice() {
+        // WHEN
+        Order order = new Order();
+        Optional<Event> decision = order.start(
+                List.of(new OrderStarted(3)),
+                new StartOrder(1)
+        );
+
+        // THEN
+        assertThat(decision).isEmpty();
     }
 
     @Test
     @DisplayName("Given order started When send take marchandise Then raise MarchandiseReceived")
     void shouldRaiseMarchandiseReceived_WhenTakeMarchandise_ForAStartedOrder() {
         // GIVEN
-        Order order = new Order(List.of(new OrderStarted(1)));
+        Order order = new Order();
 
         // WHEN
-        Optional<Event> decision = order.decide(new TakeMarchandise(1));
+        Optional<Event> decision = order.start(
+                List.of(new OrderStarted(1)),
+                new TakeMarchandise(1)
+        );
 
         // THEN
         assertThat(decision).containsInstanceOf(MarchandiseReceived.class);
@@ -44,15 +61,13 @@ public class OrderTest {
     @DisplayName("Given Order with marchandise received When take marchandise Then raise nothing")
     void shouldRaiseNothing_WhenTakeMarchandise_ForOrderWithMarchandiseReceived() {
         // GIVEN
-        Order order = new Order(
-                List.of(
-                        new OrderStarted(1),
-                        new MarchandiseReceived()
-                )
-        );
+        Order order = new Order();
 
         // WHEN
-        Optional<Event> decision = order.decide(new TakeMarchandise(1));
+        Optional<Event> decision = order.start(
+                List.of(new OrderStarted(1), new MarchandiseReceived()),
+                new TakeMarchandise(1)
+        );
 
         // THEN
         assertThat(decision).isEmpty();
@@ -62,32 +77,28 @@ public class OrderTest {
     @DisplayName("Given Order started of 7 colis When take marchandise with 5 colis Then raise MarchandisePartiallyReceived")
     void shouldRaiseMarchandisePartiallyReceived_WhenTakeMarchandiseWith5Colis_ForStartedOrderOf7Colis() {
         // GIVEN
-        Order order = new Order(
-                List.of(
-                        new OrderStarted(7)
-                )
-        );
+        Order order = new Order();
 
         // WHEN
-        Optional<Event> decision = order.decide(new TakeMarchandise(5));
+        Optional<Event> decision = order.start(
+                List.of(new OrderStarted(7)),
+                new TakeMarchandise(5)
+        );
 
         // THEN
-        assertThat(decision).containsInstanceOf(MarchandisePartiallyReceived.class);
+        assertThat(decision).contains(new MarchandisePartiallyReceived(5));
     }
 
     @Test
     @DisplayName("Given Order of 7 colis with 5 colis received When take marchandise with 2 colis Then raise MarchandiseReceived")
     void shouldRaiseMarchandiseReceived_WhenTakeMarchandiseWith2Colis_ForStartedOrderOf7ColisWith5ColisReceived() {
         // GIVEN
-        Order order = new Order(
-                List.of(
-                        new OrderStarted(7),
-                        new MarchandisePartiallyReceived(5)
-                )
-        );
+        Order order = new Order();
 
         // WHEN
-        Optional<Event> decision = order.decide(new TakeMarchandise(2));
+        Optional<Event> decision = order.start(
+                List.of(new OrderStarted(7), new MarchandisePartiallyReceived(5)),
+                new TakeMarchandise(2));
 
         // THEN
         assertThat(decision).containsInstanceOf(MarchandiseReceived.class);
@@ -97,18 +108,14 @@ public class OrderTest {
     @DisplayName("Given Order started of 7 colis with 3 colis received When take marchandise with 2 colis Then raise MarchandisePartiallyReceived")
     void shouldRaiseMarchandisePartiallyReceived_WhenTakeMarchandiseWith2Colis_ForStartedOrderOf7ColisWith3ColisReceived() {
         // GIVEN
-        Order order = new Order(
-                List.of(
-                        new OrderStarted(7),
-                        new MarchandisePartiallyReceived(3)
-                )
-        );
+        Order order = new Order();
 
         // WHEN
-        Optional<Event> decision = order.decide(new TakeMarchandise(2));
+        Optional<Event> decision = order.start(
+                List.of(new OrderStarted(7), new MarchandisePartiallyReceived(3)),
+                new TakeMarchandise(2));
 
         // THEN
-        assertThat(decision).containsInstanceOf(MarchandisePartiallyReceived.class);
+        assertThat(decision).contains(new MarchandisePartiallyReceived(2));
     }
-
 }

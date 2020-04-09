@@ -5,27 +5,15 @@ import com.hyj.event.MarchandisePartiallyReceived;
 import com.hyj.event.MarchandiseReceived;
 import com.hyj.event.OrderStarted;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public class StateProjection {
+public class DecisionProjection {
 
-    private List<Event> events;
     private boolean orderStarted;
     private int nbRemainingColis;
 
-    public StateProjection(List<Event> events) {
-        this.events = new ArrayList<>(events);
-    }
-
-    public void addEvent(Event event) {
-        this.events.add(event);
-    }
-
-    public void hydrateAll() {
-        for (Event event : events) {
-            hydrate(event);
-        }
+    public DecisionProjection(List<Event> events) {
+        events.stream().forEach(this::hydrate);
     }
 
     public void hydrate(Event event) {
