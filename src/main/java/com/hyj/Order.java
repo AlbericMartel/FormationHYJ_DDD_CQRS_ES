@@ -32,7 +32,7 @@ class Order {
     }
 
     private Event startOrder(DecisionProjection decisionProjection, StartOrder startOrder) {
-        return !decisionProjection.isOrderStarted() ? new OrderStarted(startOrder.getNbColis()) : null;
+        return !decisionProjection.isOrderStarted() ? new OrderStarted(startOrder.getId(), startOrder.getNbColis()) : null;
     }
 
     private Event takeMarchandise(DecisionProjection decisionProjection, TakeMarchandise takeMarchandise) {
@@ -44,9 +44,9 @@ class Order {
 
         int nbColisToTake = takeMarchandise.getNbColis();
         if (nbColisToTake < decisionProjection.getNbRemainingColis()) {
-            return new MarchandisePartiallyReceived(nbColisToTake);
+            return new MarchandisePartiallyReceived(takeMarchandise.getOrderId(), nbColisToTake);
         } else {
-            return new MarchandiseReceived();
+            return new MarchandiseReceived(takeMarchandise.getOrderId());
         }
     }
 

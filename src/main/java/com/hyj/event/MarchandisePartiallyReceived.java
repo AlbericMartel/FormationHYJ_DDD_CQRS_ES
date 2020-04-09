@@ -1,13 +1,21 @@
 package com.hyj.event;
 
+import com.hyj.projections.OrderId;
+
 import java.util.Objects;
 
 public class MarchandisePartiallyReceived implements Event {
 
+    private final OrderId orderId;
     private final int nbColis;
 
-    public MarchandisePartiallyReceived(int nbColis) {
+    public MarchandisePartiallyReceived(OrderId orderId, int nbColis) {
+        this.orderId = orderId;
         this.nbColis = nbColis;
+    }
+
+    public OrderId getOrderId() {
+        return orderId;
     }
 
     public int getNbColis() {
@@ -19,11 +27,12 @@ public class MarchandisePartiallyReceived implements Event {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         MarchandisePartiallyReceived that = (MarchandisePartiallyReceived) o;
-        return nbColis == that.nbColis;
+        return nbColis == that.nbColis &&
+                Objects.equals(orderId, that.orderId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(nbColis);
+        return Objects.hash(orderId, nbColis);
     }
 }

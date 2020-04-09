@@ -6,6 +6,7 @@ import com.hyj.event.Event;
 import com.hyj.event.MarchandisePartiallyReceived;
 import com.hyj.event.MarchandiseReceived;
 import com.hyj.event.OrderStarted;
+import com.hyj.projections.OrderId;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -21,10 +22,10 @@ public class OrderTest {
     void shouldRaiseOrderStarted_WhenStartOrder() {
         // WHEN
         Order order = new Order();
-        Optional<Event> decision = order.start(new StartOrder(1));
+        Optional<Event> decision = order.start(new StartOrder(new OrderId(1), 1));
 
         // THEN
-        assertThat(decision).contains(new OrderStarted(1));
+        assertThat(decision).contains(new OrderStarted(new OrderId(1), 1));
     }
 
     @Test
@@ -33,8 +34,8 @@ public class OrderTest {
         // WHEN
         Order order = new Order();
         Optional<Event> decision = order.start(
-                List.of(new OrderStarted(3)),
-                new StartOrder(1)
+                List.of(new OrderStarted(new OrderId(1), 3)),
+                new StartOrder(new OrderId(1), 1)
         );
 
         // THEN
@@ -48,9 +49,10 @@ public class OrderTest {
         Order order = new Order();
 
         // WHEN
+        OrderId orderId = new OrderId(1);
         Optional<Event> decision = order.start(
-                List.of(new OrderStarted(1)),
-                new TakeMarchandise(1)
+                List.of(new OrderStarted(orderId, 1)),
+                new TakeMarchandise(orderId, 1)
         );
 
         // THEN
@@ -64,9 +66,10 @@ public class OrderTest {
         Order order = new Order();
 
         // WHEN
+        OrderId orderId = new OrderId(1);
         Optional<Event> decision = order.start(
-                List.of(new OrderStarted(1), new MarchandiseReceived()),
-                new TakeMarchandise(1)
+                List.of(new OrderStarted(orderId, 1), new MarchandiseReceived(orderId)),
+                new TakeMarchandise(orderId, 1)
         );
 
         // THEN
@@ -80,13 +83,14 @@ public class OrderTest {
         Order order = new Order();
 
         // WHEN
+        OrderId orderId = new OrderId(1);
         Optional<Event> decision = order.start(
-                List.of(new OrderStarted(7)),
-                new TakeMarchandise(5)
+                List.of(new OrderStarted(orderId, 7)),
+                new TakeMarchandise(orderId, 5)
         );
 
         // THEN
-        assertThat(decision).contains(new MarchandisePartiallyReceived(5));
+        assertThat(decision).contains(new MarchandisePartiallyReceived(orderId, 5));
     }
 
     @Test
@@ -96,9 +100,10 @@ public class OrderTest {
         Order order = new Order();
 
         // WHEN
+        OrderId orderId = new OrderId(1);
         Optional<Event> decision = order.start(
-                List.of(new OrderStarted(7), new MarchandisePartiallyReceived(5)),
-                new TakeMarchandise(2));
+                List.of(new OrderStarted(orderId, 7), new MarchandisePartiallyReceived(orderId, 5)),
+                new TakeMarchandise(orderId, 2));
 
         // THEN
         assertThat(decision).containsInstanceOf(MarchandiseReceived.class);
@@ -111,11 +116,12 @@ public class OrderTest {
         Order order = new Order();
 
         // WHEN
+        OrderId orderId = new OrderId(1);
         Optional<Event> decision = order.start(
-                List.of(new OrderStarted(7), new MarchandisePartiallyReceived(3)),
-                new TakeMarchandise(2));
+                List.of(new OrderStarted(orderId, 7), new MarchandisePartiallyReceived(orderId, 3)),
+                new TakeMarchandise(orderId, 2));
 
         // THEN
-        assertThat(decision).contains(new MarchandisePartiallyReceived(2));
+        assertThat(decision).contains(new MarchandisePartiallyReceived(orderId, 2));
     }
 }
