@@ -1,19 +1,20 @@
-package com.hyj.projections;
+package com.hyj.suivimarchandise.projections;
 
-import com.hyj.event.Event;
-import com.hyj.event.MarchandisePartiallyReceived;
-import com.hyj.event.MarchandiseReceived;
-import com.hyj.event.OrderStarted;
+import com.hyj.suivimarchandise.event.Event;
+import com.hyj.suivimarchandise.event.MarchandisePartiallyReceived;
+import com.hyj.suivimarchandise.event.MarchandiseReceived;
+import com.hyj.suivimarchandise.event.OrderStarted;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-public class WaitingOrders {
+public class WaitingOrders implements Projection {
 
     private Map<OrderId, Integer> waitingOrders = new HashMap<>();
 
-    public void listen(Event event) {
+    @Override
+    public void handle(Event event) {
         if (event instanceof OrderStarted) {
             OrderStarted orderStarted = (OrderStarted) event;
             waitingOrders.put(orderStarted.getId(), orderStarted.getNbColis());

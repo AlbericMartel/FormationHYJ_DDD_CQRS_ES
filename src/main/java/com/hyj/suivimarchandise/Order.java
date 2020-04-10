@@ -1,23 +1,23 @@
-package com.hyj;
+package com.hyj.suivimarchandise;
 
-import com.hyj.command.Command;
-import com.hyj.command.StartOrder;
-import com.hyj.command.TakeMarchandise;
-import com.hyj.event.Event;
-import com.hyj.event.MarchandisePartiallyReceived;
-import com.hyj.event.MarchandiseReceived;
-import com.hyj.event.OrderStarted;
+import com.hyj.suivimarchandise.command.Command;
+import com.hyj.suivimarchandise.command.StartOrder;
+import com.hyj.suivimarchandise.command.TakeMarchandise;
+import com.hyj.suivimarchandise.event.Event;
+import com.hyj.suivimarchandise.event.MarchandisePartiallyReceived;
+import com.hyj.suivimarchandise.event.MarchandiseReceived;
+import com.hyj.suivimarchandise.event.OrderStarted;
 
 import java.util.List;
 import java.util.Optional;
 
-class Order {
+public class Order {
 
     public Optional<Event> start(StartOrder command) {
-        return start(List.of(), command);
+        return decide(List.of(), command);
     }
 
-    public Optional<Event> start(List<Event> history, Command command) {
+    public Optional<Event> decide(List<Event> history, Command command) {
         DecisionProjection decisionProjection = new DecisionProjection(history);
 
         Event output = null;

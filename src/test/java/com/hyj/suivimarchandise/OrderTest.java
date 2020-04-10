@@ -1,12 +1,12 @@
-package com.hyj;
+package com.hyj.suivimarchandise;
 
-import com.hyj.command.StartOrder;
-import com.hyj.command.TakeMarchandise;
-import com.hyj.event.Event;
-import com.hyj.event.MarchandisePartiallyReceived;
-import com.hyj.event.MarchandiseReceived;
-import com.hyj.event.OrderStarted;
-import com.hyj.projections.OrderId;
+import com.hyj.suivimarchandise.command.StartOrder;
+import com.hyj.suivimarchandise.command.TakeMarchandise;
+import com.hyj.suivimarchandise.event.Event;
+import com.hyj.suivimarchandise.event.MarchandisePartiallyReceived;
+import com.hyj.suivimarchandise.event.MarchandiseReceived;
+import com.hyj.suivimarchandise.event.OrderStarted;
+import com.hyj.suivimarchandise.projections.OrderId;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -33,7 +33,7 @@ public class OrderTest {
     void shouldRaiseNothing_WhenStartOrderTwice() {
         // WHEN
         Order order = new Order();
-        Optional<Event> decision = order.start(
+        Optional<Event> decision = order.decide(
                 List.of(new OrderStarted(new OrderId(1), 3)),
                 new StartOrder(new OrderId(1), 1)
         );
@@ -50,7 +50,7 @@ public class OrderTest {
 
         // WHEN
         OrderId orderId = new OrderId(1);
-        Optional<Event> decision = order.start(
+        Optional<Event> decision = order.decide(
                 List.of(new OrderStarted(orderId, 1)),
                 new TakeMarchandise(orderId, 1)
         );
@@ -67,7 +67,7 @@ public class OrderTest {
 
         // WHEN
         OrderId orderId = new OrderId(1);
-        Optional<Event> decision = order.start(
+        Optional<Event> decision = order.decide(
                 List.of(new OrderStarted(orderId, 1), new MarchandiseReceived(orderId)),
                 new TakeMarchandise(orderId, 1)
         );
@@ -84,7 +84,7 @@ public class OrderTest {
 
         // WHEN
         OrderId orderId = new OrderId(1);
-        Optional<Event> decision = order.start(
+        Optional<Event> decision = order.decide(
                 List.of(new OrderStarted(orderId, 7)),
                 new TakeMarchandise(orderId, 5)
         );
@@ -101,7 +101,7 @@ public class OrderTest {
 
         // WHEN
         OrderId orderId = new OrderId(1);
-        Optional<Event> decision = order.start(
+        Optional<Event> decision = order.decide(
                 List.of(new OrderStarted(orderId, 7), new MarchandisePartiallyReceived(orderId, 5)),
                 new TakeMarchandise(orderId, 2));
 
@@ -117,7 +117,7 @@ public class OrderTest {
 
         // WHEN
         OrderId orderId = new OrderId(1);
-        Optional<Event> decision = order.start(
+        Optional<Event> decision = order.decide(
                 List.of(new OrderStarted(orderId, 7), new MarchandisePartiallyReceived(orderId, 3)),
                 new TakeMarchandise(orderId, 2));
 

@@ -1,6 +1,6 @@
-package com.hyj.event;
+package com.hyj.suivimarchandise.event;
 
-import com.hyj.projections.OrderId;
+import com.hyj.suivimarchandise.projections.OrderId;
 
 public class MarchandiseReceived implements Event {
 

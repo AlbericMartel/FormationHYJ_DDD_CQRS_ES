@@ -1,6 +1,6 @@
-package com.hyj.command;
+package com.hyj.suivimarchandise.command;
 
-import com.hyj.projections.OrderId;
+import com.hyj.suivimarchandise.projections.OrderId;
 
 public class StartOrder implements Command {
 

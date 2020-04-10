@@ -1,9 +1,9 @@
-package com.hyj;
+package com.hyj.suivimarchandise;
 
-import com.hyj.event.Event;
-import com.hyj.event.MarchandisePartiallyReceived;
-import com.hyj.event.MarchandiseReceived;
-import com.hyj.event.OrderStarted;
+import com.hyj.suivimarchandise.event.Event;
+import com.hyj.suivimarchandise.event.MarchandisePartiallyReceived;
+import com.hyj.suivimarchandise.event.MarchandiseReceived;
+import com.hyj.suivimarchandise.event.OrderStarted;
 
 import java.util.List;
 

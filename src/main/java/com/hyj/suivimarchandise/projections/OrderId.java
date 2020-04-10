@@ -1,4 +1,4 @@
-package com.hyj.projections;
+package com.hyj.suivimarchandise.projections;
 
 import java.util.Objects;
 
