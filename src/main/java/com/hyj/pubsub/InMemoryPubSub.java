@@ -1,6 +1,6 @@
 package com.hyj.pubsub;
 
-import com.hyj.suivimarchandise.event.Event;
+import com.hyj.store.EventStore;
 import com.hyj.suivimarchandise.projections.Projection;
 
 import java.util.ArrayList;
@@ -16,9 +16,9 @@ public class InMemoryPubSub implements PubSub {
     }
 
     @Override
-    public void publish(Event event) {
+    public void publish(EventWrapper event) {
         eventStore.storeEvent(event);
-        listeners.forEach(projection -> projection.handle(event));
+        listeners.forEach(projection -> projection.handle(event.getEvent()));
     }
 
     @Override

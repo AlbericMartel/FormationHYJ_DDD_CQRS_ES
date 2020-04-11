@@ -3,14 +3,17 @@ package com.hyj.suivimarchandise.projections;
 import java.util.Objects;
 
 public class OrderId {
-    private int id;
+    private int value;
 
-    public OrderId(int id) {
-        this.id = id;
+    private OrderId() {
     }
 
-    public int getId() {
-        return id;
+    public OrderId(int value) {
+        this.value = value;
+    }
+
+    public int getValue() {
+        return value;
     }
 
     @Override
@@ -18,11 +21,18 @@ public class OrderId {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         OrderId orderId = (OrderId) o;
-        return id == orderId.id;
+        return value == orderId.value;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id);
+        return Objects.hash(value);
+    }
+
+    @Override
+    public String toString() {
+        return "OrderId{" +
+                "value=" + value +
+                '}';
     }
 }

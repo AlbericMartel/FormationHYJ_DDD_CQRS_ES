@@ -6,8 +6,11 @@ import java.util.Objects;
 
 public class OrderStarted implements Event {
 
-    private final OrderId id;
-    private final int nbColis;
+    private OrderId id;
+    private int nbColis;
+
+    private OrderStarted() {
+    }
 
     public OrderStarted(OrderId id, int nbColis) {
         this.id = id;
@@ -34,5 +37,13 @@ public class OrderStarted implements Event {
     @Override
     public int hashCode() {
         return Objects.hash(id, nbColis);
+    }
+
+    @Override
+    public String toString() {
+        return "OrderStarted{" +
+                "id=" + id +
+                ", nbColis=" + nbColis +
+                '}';
     }
 }
